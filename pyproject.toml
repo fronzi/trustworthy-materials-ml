@@ -46,6 +46,9 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "NPY", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["E501", "RUF001"]
+
 [tool.mypy]
 python_version = "3.12"
 ignore_missing_imports = true

@@ -57,7 +57,7 @@ def uncertainty_figure(root: Path) -> None:
         ("absolute_conformal", BLUE, "Absolute conformal"),
         ("normalised_conformal", TEAL, "Normalised conformal"),
     ]
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.3), sharey=True, layout="constrained")
     for ax, split, title in zip(
         axes, ("random_5fold", "loco_5cluster"), ("Random split", "Chemical shift"), strict=True
     ):
@@ -77,7 +77,8 @@ def uncertainty_figure(root: Path) -> None:
         ax.set_xticks(x, [LABEL[m] for m in UNCERTAINTY_MODELS], rotation=15)
         ax.set_title(title, fontsize=9)
     axes[0].set_ylabel("Coverage of 90% interval (%)")
-    axes[0].legend(frameon=False, fontsize=7, loc="lower left")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, fontsize=8, ncols=3, loc="outside lower center")
     _save(fig, root, "fig2_uncertainty_calibration")
 
 
@@ -105,7 +106,7 @@ def active_figure(root: Path) -> None:
 
 def quantum_figure(root: Path) -> None:
     table = pd.read_csv(root / "results" / "quantum_sensing_summary.csv")
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3))
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.3), layout="constrained")
     for strategy, colour, label in (
         ("fixed_cycle", GREY, "Fixed cycle"),
         ("adaptive", VIOLET, "Adaptive"),
@@ -122,9 +123,12 @@ def quantum_figure(root: Path) -> None:
         reference["budget_us"], reference["fixed_tau_crb_rmse_mhz"] * 1000, "k--",
         label="Fixed-τ local Cramér-Rao reference",
     )  # fmt: skip
+    axes[0].set_xticks(reference["budget_us"], [f"{x:.0f}" for x in reference["budget_us"]])
+    axes[0].minorticks_off()
     axes[0].set_xlabel("Total sensing time (µs)")
     axes[0].set_ylabel("Frequency RMSE (kHz)")
-    axes[0].legend(frameon=False, fontsize=7)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, fontsize=8, ncols=3, loc="outside lower center")
     axes[1].axhline(90, color="#111827", ls="--", lw=1)
     axes[1].set_ylim(70, 100)
     axes[1].set_xlabel("Total sensing time (µs)")

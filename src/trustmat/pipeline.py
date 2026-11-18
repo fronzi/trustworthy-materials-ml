@@ -165,6 +165,26 @@ def run_quantum(root: Path, jobs: int, trials: int = 300) -> None:
     summary["fixed_tau_crb_rmse_mhz"] = 1 / np.sqrt(rate * summary["budget_us"])
     summary["crb_optimal_tau_us"] = tau
     summary.to_csv(root / "results" / "quantum_sensing_summary.csv", index=False)
+    wide = at_budget.pivot_table(
+        index=["budget_us", "seed"], columns="strategy", values="squared_error"
+    )
+    rng = np.random.default_rng(0)
+    tests = []
+    for budget, group in wide.groupby(level="budget_us"):
+        adaptive, fixed = group["adaptive"].to_numpy(), group["fixed_cycle"].to_numpy()
+        ratio = np.sqrt(adaptive.mean() / fixed.mean())
+        indices = rng.integers(0, len(group), (5000, len(group)))
+        draws = np.sqrt(adaptive[indices].mean(axis=1) / fixed[indices].mean(axis=1))
+        tests.append(
+            {
+                "budget_us": budget,
+                "paired_trials": len(group),
+                "adaptive_to_fixed_rmse_ratio": ratio,
+                "ci95_low": np.quantile(draws, 0.025),
+                "ci95_high": np.quantile(draws, 0.975),
+            }
+        )
+    pd.DataFrame(tests).to_csv(root / "results" / "quantum_sensing_tests.csv", index=False)
 
 
 def write_manifest(root: Path) -> None:

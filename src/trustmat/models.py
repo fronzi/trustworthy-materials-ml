@@ -25,6 +25,7 @@ class RBFKANLayer(nn.Module):
 
     def __init__(self, n_in: int, n_out: int, n_basis: int = 8, limit: float = 3.0) -> None:
         super().__init__()
+        self.centres: torch.Tensor
         self.register_buffer("centres", torch.linspace(-limit, limit, n_basis))
         self.width = 2 * limit / (n_basis - 1)
         self.weights = nn.Parameter(0.05 * torch.randn(n_in, n_out, n_basis))

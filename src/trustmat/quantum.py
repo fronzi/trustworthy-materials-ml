@@ -19,7 +19,8 @@ def nv_transition_frequencies(field_tesla: float) -> tuple[float, float]:
     hamiltonian = ZERO_FIELD_SPLITTING_GHZ * sz * sz + GAMMA_E_GHZ_PER_T * field_tesla * sz
     energies = hamiltonian.diag()
     ground = energies[1]
-    return tuple(sorted((float(energies[0] - ground), float(energies[2] - ground))))
+    low, high = sorted((float(energies[0] - ground), float(energies[2] - ground)))
+    return low, high
 
 
 def ramsey_probability(
@@ -64,7 +65,7 @@ class SensorConfig:
     overhead_us: float = 2.0
     frequency_limit_mhz: float = 0.5
     grid_points: int = 1601
-    shots: int = 120
+    shots: int = 200
 
 
 def _entropy(probability: np.ndarray) -> np.ndarray:
