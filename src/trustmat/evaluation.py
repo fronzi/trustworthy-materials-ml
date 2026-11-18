@@ -99,5 +99,5 @@ def uncertainty_task(
 
 def summarise(frame: pd.DataFrame, keys: list[str], values: list[str]) -> pd.DataFrame:
     grouped = frame.groupby(keys)[values].agg(["mean", "std"])
-    grouped.columns = [f"{name}_{stat}" for name, stat in grouped.columns.to_flat_index()]
+    grouped.columns = ["_".join(map(str, name)) for name in grouped.columns.to_flat_index()]
     return grouped.reset_index()

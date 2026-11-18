@@ -84,7 +84,8 @@ class NeuralEnsemble:
             net = _mlp(data.shape[1]) if self.kind == "mlp" else KAN(data.shape[1])
             optimiser = torch.optim.AdamW(net.parameters(), lr=self.lr, weight_decay=1e-4)
             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, self.epochs)
-            best_loss, best_state = np.inf, None
+            best_loss = np.inf
+            best_state: dict[str, Any] = {}
             for _ in range(self.epochs):
                 net.train()
                 shuffled = rng.permutation(train)
